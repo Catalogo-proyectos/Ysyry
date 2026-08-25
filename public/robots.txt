@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://ysyry.com.py/sitemap.xml
+Host: https://ysyry.com.py

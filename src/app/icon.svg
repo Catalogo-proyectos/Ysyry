@@ -1,0 +1,16 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">YSYRY logo montaña</title>
+  <desc id="desc">Logo monocromático YSYRY con montaña estilizada y marco abierto.</desc>
+  <rect width="1200" height="1200" fill="#FFFFFF"/>
+  <g transform="translate(0 18)">
+    <path d="M240 394H526M674 394H960V570" stroke="#303030" stroke-width="22" stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M240 394V570" stroke="#303030" stroke-width="22" stroke-linecap="square"/>
+    <path
+      fill="#303030"
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M252 570L320 558L370 500L418 516L492 414L553 452L620 296L724 482L782 434L827 504L874 496L950 570H252ZM356 532C390 516 428 514 470 535C438 548 397 546 330 560L356 532ZM500 438L555 472L606 352L674 404C640 396 614 421 589 478L566 524C544 489 520 472 486 468L450 526L420 512L500 438ZM734 502L782 434L827 504L874 496L922 542C874 526 831 536 794 564C784 535 764 516 734 502Z"
+    />
+  </g>
+  <text x="600" y="820" fill="#303030" font-family="Montserrat, Avenir Next, Helvetica Neue, Arial, sans-serif" font-size="126" font-weight="800" letter-spacing="20" text-anchor="middle">YSYRY</text>
+</svg>
