@@ -70,7 +70,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
     const map = L.map(mapContainerRef.current, {
       center: initial.center,
       zoom: initial.zoom,
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: true,
       scrollWheelZoom: true
     });
