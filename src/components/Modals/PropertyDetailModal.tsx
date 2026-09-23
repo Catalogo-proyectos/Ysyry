@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Bath,
   Bed,
@@ -44,10 +44,12 @@ export const PropertyDetailModal: React.FC = () => {
     whatsappNumber
   } = useAppStore();
   const [mediaTab, setMediaTab] = useState<MediaTab>('photos');
+  const [lastOpenedId, setLastOpenedId] = useState<string | undefined>();
 
-  useEffect(() => {
-    if (isDetailModalOpen) setMediaTab('photos');
-  }, [isDetailModalOpen, selectedProperty?.id]);
+  if (isDetailModalOpen && selectedProperty?.id !== lastOpenedId) {
+    setLastOpenedId(selectedProperty?.id);
+    setMediaTab('photos');
+  }
 
   const availableTabs = useMemo(() => {
     if (!selectedProperty) return [] as MediaTab[];

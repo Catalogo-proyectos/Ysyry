@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface HeroProps {
   id?: string;

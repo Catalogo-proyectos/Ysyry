@@ -1,14 +1,18 @@
 'use client';
 
 import React from 'react';
+import { useAppStore } from '@/store/useAppStore';
+
+const DEFAULT_STATS = [
+  { number: '+150', label: 'Propiedades Comercializadas' },
+  { number: '+10', label: 'Años de Experiencia en el Mercado' },
+  { number: '98%', label: 'Clientes Satisfechos' },
+  { number: '+500', label: 'Personas & Familias Acompañadas' }
+];
 
 export const StatsSection: React.FC = () => {
-  const stats = [
-    { number: '+150', label: 'Propiedades Comercializadas' },
-    { number: '+10', label: 'Años de Experiencia en el Mercado' },
-    { number: '98%', label: 'Clientes Satisfechos' },
-    { number: '+500', label: 'Personas & Familias Acompañadas' }
-  ];
+  const settings = useAppStore((state) => state.settings);
+  const stats = settings?.stats?.length ? settings.stats : DEFAULT_STATS;
 
   return (
     <section className="section-padding bg-slate-50 border-y border-slate-200/80" id="estadisticas">

@@ -1,117 +1,156 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://ysyry.com.py'),
-  title: {
-    default: 'Ysyry Inmobiliaria | Catálogo de Propiedades en Paraguay',
-    template: '%s | Ysyry Inmobiliaria'
-  },
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ysyry.com.py';
+
+const FALLBACK = {
+  businessName: 'Ysyry Inmobiliaria',
+  whatsappNumber: '595981879612',
+  address: 'Itapúa / Alto Paraná, Paraguay',
   description:
     'Catálogo exclusivo de propiedades, terrenos, casas, cabañas y proyectos de inversión en Paraguay (Itapúa, Alto Paraná, Asunción). Atención personalizada por WhatsApp.',
-  keywords: [
-    'Ysyry',
-    'Ysyry Inmobiliaria',
-    'inmobiliaria Paraguay',
-    'propiedades en venta Paraguay',
-    'alquiler cabañas Itapúa',
-    'Cabañas Ysyry',
-    'San Juan del Paraná',
-    'Encarnación',
-    'Ciudad del Este inmuebles',
-    'terrenos Alto Paraná',
-    'casas en venta Paraguay',
-    'inversión inmobiliaria Paraguay'
-  ],
-  authors: [{ name: 'Ysyry Inmobiliaria', url: 'https://ysyry.com.py' }],
-  creator: 'Ysyry Inmobiliaria',
-  publisher: 'Ysyry Inmobiliaria',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false
-  },
-  alternates: {
-    canonical: 'https://ysyry.com.py',
-    languages: {
-      'es-PY': 'https://ysyry.com.py',
-      es: 'https://ysyry.com.py'
-    }
-  },
-  openGraph: {
-    title: 'Ysyry Inmobiliaria | Catálogo de Propiedades en Paraguay',
-    description:
-      'Casas, terrenos, cabañas y proyectos de inversión en Paraguay con asesoramiento y contacto directo.',
-    url: 'https://ysyry.com.py',
-    siteName: 'Ysyry Inmobiliaria',
-    locale: 'es_PY',
-    type: 'website',
-    images: [
-      {
-        url: '/img/aurora-env.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Ysyry Inmobiliaria Paraguay'
-      }
-    ]
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Ysyry Inmobiliaria | Catálogo de Propiedades en Paraguay',
-    description:
-      'Catálogo de propiedades, terrenos y cabañas en Paraguay con atención directa.',
-    images: ['/img/aurora-env.jpg']
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1
-    }
-  },
-  icons: {
-    icon: [
-      { url: '/img/logo-ysyry-montana-bn.svg', type: 'image/svg+xml' },
-      { url: '/favicon.svg', type: 'image/svg+xml' }
-    ],
-    apple: '/img/logo-ysyry-montana-bn.svg'
-  },
-  other: {
-    'geo.region': 'PY',
-    'geo.placename': 'Paraguay',
-    'geo.position': '-25.5015;-54.6980',
-    ICBM: '-25.5015, -54.6980'
-  }
 };
 
-export default function RootLayout({
+interface SettingsResult {
+  businessName?: string;
+  whatsappNumber?: string;
+  address?: string;
+  about?: string;
+}
+
+async function getSettings(): Promise<SettingsResult> {
+  try {
+    const response = await fetch(`${API_BASE}/settings`, {
+      next: { revalidate: 3600 },
+    });
+    if (!response.ok) return FALLBACK;
+    const data = (await response.json()) as SettingsResult;
+    return { ...FALLBACK, ...data };
+  } catch {
+    return FALLBACK;
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  const businessName = settings.businessName || FALLBACK.businessName;
+  const description = settings.about || FALLBACK.description;
+  const url = SITE_URL;
+
+  return {
+    metadataBase: new URL(url),
+    title: {
+      default: `${businessName} | Catálogo de Propiedades en Paraguay`,
+      template: `%s | ${businessName}`,
+    },
+    description,
+    keywords: [
+      'Ysyry',
+      'Ysyry Inmobiliaria',
+      'inmobiliaria Paraguay',
+      'propiedades en venta Paraguay',
+      'alquiler cabañas Itapúa',
+      'Cabañas Ysyry',
+      'San Juan del Paraná',
+      'Encarnación',
+      'Ciudad del Este inmuebles',
+      'terrenos Alto Paraná',
+      'casas en venta Paraguay',
+      'inversión inmobiliaria Paraguay'
+    ],
+    authors: [{ name: businessName, url }],
+    creator: businessName,
+    publisher: businessName,
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false
+    },
+    alternates: {
+      canonical: url,
+      languages: {
+        'es-PY': url,
+        es: url
+      }
+    },
+    openGraph: {
+      title: `${businessName} | Catálogo de Propiedades en Paraguay`,
+      description,
+      url,
+      siteName: businessName,
+      locale: 'es_PY',
+      type: 'website',
+      images: [
+        {
+          url: '/img/aurora-env.jpg',
+          width: 1200,
+          height: 630,
+          alt: `${businessName} Paraguay`
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${businessName} | Catálogo de Propiedades en Paraguay`,
+      description,
+      images: ['/img/aurora-env.jpg']
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1
+      }
+    },
+    icons: {
+      icon: [
+        { url: '/img/logo-ysyry-montana-bn.svg', type: 'image/svg+xml' },
+        { url: '/favicon.svg', type: 'image/svg+xml' }
+      ],
+      apple: '/img/logo-ysyry-montana-bn.svg'
+    },
+    other: {
+      'geo.region': 'PY',
+      'geo.placename': 'Paraguay',
+      'geo.position': '-25.5015;-54.6980',
+      ICBM: '-25.5015, -54.6980'
+    }
+  };
+}
+
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSettings();
+  const businessName = settings.businessName || FALLBACK.businessName;
+  const whatsapp = settings.whatsappNumber || FALLBACK.whatsappNumber;
+  const address = settings.address || FALLBACK.address;
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'RealEstateAgent',
-        '@id': 'https://ysyry.com.py/#organization',
-        name: 'Ysyry Inmobiliaria',
-        url: 'https://ysyry.com.py',
-        logo: 'https://ysyry.com.py/img/logo-ysyry-montana-bn.svg',
-        image: 'https://ysyry.com.py/img/aurora-env.jpg',
+        '@id': `${SITE_URL}/#organization`,
+        name: businessName,
+        url: SITE_URL,
+        logo: `${SITE_URL}/img/logo-ysyry-montana-bn.svg`,
+        image: `${SITE_URL}/img/aurora-env.jpg`,
         description:
           'Catálogo de propiedades, terrenos y proyectos con atención directa en Paraguay.',
-        telephone: '+595 981 879 612',
+        telephone: `+${whatsapp}`,
         priceRange: '$$$',
         address: {
           '@type': 'PostalAddress',
           addressCountry: 'PY',
-          addressRegion: 'Itapúa / Alto Paraná',
-          addressLocality: 'Paraguay'
+          addressRegion: address
         },
         geo: {
           '@type': 'GeoCoordinates',
@@ -127,13 +166,13 @@ export default function RootLayout({
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://ysyry.com.py/#website',
-        url: 'https://ysyry.com.py',
-        name: 'Ysyry Inmobiliaria',
+        '@id': `${SITE_URL}/#website`,
+        url: SITE_URL,
+        name: businessName,
         description:
           'Catálogo de propiedades, terrenos y proyectos de inversión en Paraguay.',
         publisher: {
-          '@id': 'https://ysyry.com.py/#organization'
+          '@id': `${SITE_URL}/#organization`
         },
         inLanguage: 'es-PY'
       }

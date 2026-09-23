@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next';
-import { propertiesData } from '@/data/properties';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://ysyry.com.py';

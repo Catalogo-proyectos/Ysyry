@@ -6,7 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { whatsappUrl } from '@/lib/whatsapp';
 
 export const SellerBanner: React.FC = () => {
-  const { openSellerModal, whatsappNumber } = useAppStore();
+  const { whatsappNumber } = useAppStore();
 
   return (
     <section className="section-padding bg-white" id="vender">

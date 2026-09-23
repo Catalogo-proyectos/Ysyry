@@ -6,7 +6,7 @@
     "dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint \"{src,eslint.config.mjs}/**/*.{ts,tsx}\"",
     "docker:build": "docker build -t ysyry .",
     "docker:run": "docker run -p 3000:3000 ysyry",
     "docker:up": "docker compose up -d",
@@ -24,12 +24,15 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.6",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3"
   }
 }
