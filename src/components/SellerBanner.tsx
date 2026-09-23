@@ -3,9 +3,10 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { whatsappUrl } from '@/lib/whatsapp';
 
 export const SellerBanner: React.FC = () => {
-  const { openSellerModal } = useAppStore();
+  const { openSellerModal, whatsappNumber } = useAppStore();
 
   return (
     <section className="section-padding bg-white" id="vender">
@@ -31,7 +32,7 @@ export const SellerBanner: React.FC = () => {
             </p>
             <div className="w-full flex justify-center sm:justify-start">
               <a
-                href="https://wa.me/595981879612?text=Hola%20Ysyry%20Inmobiliaria%2C%20tengo%20una%20propiedad%20y%20quisiera%20asesoramiento%20para%20venderla."
+                href={whatsappUrl('Hola Ysyry Inmobiliaria, tengo una propiedad y quisiera asesoramiento para venderla.', whatsappNumber())}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-luxury btn-white-luxury w-full sm:w-auto justify-center text-center shadow-lg"

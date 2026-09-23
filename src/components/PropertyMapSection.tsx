@@ -3,7 +3,6 @@
 import React, { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppStore } from '@/store/useAppStore';
-import { propertiesData } from '@/data/properties';
 import { Property } from '@/types/property';
 import { MapLayerType } from './PropertyMap';
 import {
@@ -31,13 +30,14 @@ const PropertyMap = dynamic(
 
 export const PropertyMapSection: React.FC = () => {
   const { openDetailModal } = useAppStore();
+  const allProperties = useAppStore((state) => state.properties);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [activeRegion, setActiveRegion] = useState<'all' | 'alto-parana' | 'itapua'>('alto-parana');
   const [mapLayerType, setMapLayerType] = useState<MapLayerType>('hybrid');
 
   const mappableProperties = useMemo(() => {
-    return propertiesData.filter((p) => Boolean(p.coordinates));
-  }, []);
+    return allProperties.filter((p) => Boolean(p.coordinates));
+  }, [allProperties]);
 
   const handleSelectProperty = (property: Property) => {
     setSelectedProperty(property);

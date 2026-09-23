@@ -2,8 +2,11 @@
 
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useAppStore } from '@/store/useAppStore';
+import { whatsappUrl } from '@/lib/whatsapp';
 
 export const AboutSection: React.FC = () => {
+  const whatsappNumber = useAppStore((state) => state.whatsappNumber)();
   return (
     <section className="section-padding bg-white" id="nosotros">
       <div className="container-custom">
@@ -30,7 +33,7 @@ export const AboutSection: React.FC = () => {
             </p>
 
             <a
-              href="https://wa.me/595981879612?text=Hola%20Ysyry%20Inmobiliaria%2C%20quisiera%20hablar%20con%20un%20asesor."
+              href={whatsappUrl('Hola Ysyry Inmobiliaria, quisiera hablar con un asesor.', whatsappNumber)}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-luxury btn-primary-luxury"

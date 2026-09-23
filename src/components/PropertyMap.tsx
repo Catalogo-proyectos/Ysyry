@@ -3,6 +3,8 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { Property } from '@/types/property';
+import { useAppStore } from '@/store/useAppStore';
+import { whatsappUrl } from '@/lib/whatsapp';
 
 export type MapLayerType = 'hybrid' | 'satellite';
 
@@ -25,6 +27,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
   activeRegion,
   onCenterChange
 }) => {
+  const globalWhatsapp = useAppStore((state) => state.whatsappNumber)();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
@@ -180,7 +183,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
             <button id="btn-view-${property.id}" style="flex: 1; padding: 7px 12px; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;">
               Ver ficha completa
             </button>
-            <a href="https://wa.me/${property.whatsappNumber || '595981879612'}?text=Hola!%20Me%20interesa%20la%20propiedad%20${encodeURIComponent(property.title)}" target="_blank" rel="noopener noreferrer" style="padding: 7px 10px; background: #15803d; color: #ffffff; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+            <a href="${whatsappUrl(`Hola! Me interesa la propiedad ${property.title}`, property.whatsappNumber || globalWhatsapp)}" target="_blank" rel="noopener noreferrer" style="padding: 7px 10px; background: #15803d; color: #ffffff; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center;">
               WhatsApp
             </a>
           </div>

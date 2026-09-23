@@ -3,7 +3,6 @@
 import React from 'react';
 import { RotateCcw } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
-import { propertiesData } from '@/data/properties';
 import { PropertyCard } from './PropertyCard';
 import { CatalogSelect } from './CatalogSelect';
 import { PropertyStatus } from '@/types/property';
@@ -25,12 +24,16 @@ export const CatalogSection: React.FC = () => {
     searchFilters,
     setSearchFilters,
     resetSearchFilters,
-    getFilteredProperties
+    getFilteredProperties,
+    status,
+    errorMessage,
+    retryCatalog
   } = useAppStore();
 
   const filteredProperties = getFilteredProperties();
-  const locations = Array.from(new Set(propertiesData.map((property) => property.zone))).sort();
-  const types = Array.from(new Set(propertiesData.map((property) => property.type))).sort();
+  const allProperties = useAppStore((state) => state.properties);
+  const locations = Array.from(new Set(allProperties.map((property) => property.zone))).sort();
+  const types = Array.from(new Set(allProperties.map((property) => property.type))).sort();
   const hasSearchFilters = Boolean(searchFilters.location || searchFilters.type || searchFilters.status);
 
   return (
@@ -106,11 +109,29 @@ export const CatalogSection: React.FC = () => {
           ))}
         </div>
 
-        {filteredProperties.length > 0 ? (
+        {status === 'loading' && (
+          <div className="catalog-empty-state">
+            <div className="w-10 h-10 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <p>Cargando catálogo...</p>
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div className="catalog-empty-state">
+            <p>{errorMessage || 'No se pudo cargar el catálogo.'}</p>
+            <button onClick={retryCatalog} className="btn-luxury btn-primary-luxury btn-sm-luxury">
+              Reintentar
+            </button>
+          </div>
+        )}
+
+        {status === 'ready' && filteredProperties.length > 0 && (
           <div className="properties-grid" id="propertiesGrid">
             {filteredProperties.map((property) => <PropertyCard key={property.id} property={property} />)}
           </div>
-        ) : (
+        )}
+
+        {status === 'ready' && filteredProperties.length === 0 && (
           <div className="catalog-empty-state">
             <p>No hay propiedades publicadas con esos criterios.</p>
             <button onClick={() => { setActiveFilter('all'); resetSearchFilters(); }} className="btn-luxury btn-primary-luxury btn-sm-luxury">

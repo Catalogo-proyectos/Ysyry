@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
+import { whatsappUrl } from '@/lib/whatsapp';
 import {
   Menu,
   X,
@@ -20,7 +21,8 @@ export const Header: React.FC = () => {
   const {
     isMobileMenuOpen,
     setMobileMenuOpen,
-    openSellerModal
+    openSellerModal,
+    whatsappNumber
   } = useAppStore();
 
   useEffect(() => {
@@ -200,7 +202,7 @@ export const Header: React.FC = () => {
 
             <div className="mt-8 pt-5 border-t border-slate-200 space-y-4">
               <a
-                href="https://wa.me/595981879612?text=Hola%20Ysyry%20Inmobiliaria%2C%20quisiera%20consultar%20sobre%20las%20propiedades%20disponibles."
+                href={whatsappUrl('Hola Ysyry Inmobiliaria, quisiera consultar sobre las propiedades disponibles.', whatsappNumber())}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMobileMenuOpen(false)}

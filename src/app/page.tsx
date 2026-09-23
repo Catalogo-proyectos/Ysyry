@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AboutSection } from '@/components/AboutSection';
 import { CatalogSection } from '@/components/CatalogSection';
 import { FloatingWhatsApp } from '@/components/FloatingWhatsApp';
@@ -13,8 +13,15 @@ import { PropertyDetailModal } from '@/components/Modals/PropertyDetailModal';
 import { PublishModal } from '@/components/Modals/PublishModal';
 import { SellerModal } from '@/components/Modals/SellerModal';
 import { SellerBanner } from '@/components/SellerBanner';
+import { useAppStore } from '@/store/useAppStore';
 
 export default function Home() {
+  const loadCatalog = useAppStore((state) => state.loadCatalog);
+
+  useEffect(() => {
+    void loadCatalog();
+  }, [loadCatalog]);
+
   return (
     <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-600 selection:text-white">
       <Header />

@@ -1,12 +1,24 @@
 import { create } from 'zustand';
 import { Currency, Property, PropertyStatus, SearchFilters, ProjectionType } from '@/types/property';
-import { propertiesData } from '@/data/properties';
+import { ApiSettings } from '@/types/api';
+import { mapApiProperty } from '@/lib/adapter';
+import { getExchangeRate, getProperties, getSettings } from '@/lib/api';
+
+type CatalogStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 interface AppStoreState {
   currency: Currency;
   exchangeRate: number;
   setCurrency: (currency: Currency) => void;
   formatPrice: (priceUSD: number, isRent?: boolean) => string;
+
+  properties: Property[];
+  settings: ApiSettings | null;
+  status: CatalogStatus;
+  errorMessage: string;
+  loadCatalog: () => Promise<void>;
+  retryCatalog: () => void;
+  whatsappNumber: () => string;
 
   activeFilter: PropertyStatus;
   setActiveFilter: (filter: PropertyStatus) => void;
@@ -38,11 +50,14 @@ interface AppStoreState {
   setActiveProjection: (proj: ProjectionType) => void;
 }
 
+const DEFAULT_WHATSAPP = '595981879612';
+
 export const useAppStore = create<AppStoreState>((set, get) => ({
   currency: 'USD',
   exchangeRate: 7500,
   setCurrency: (currency) => set({ currency }),
   formatPrice: (priceUSD, isRent = false) => {
+    if (!priceUSD || priceUSD <= 0) return 'Consultar';
     const { currency, exchangeRate } = get();
     if (currency === 'PYG') {
       const pygAmount = priceUSD * exchangeRate;
@@ -61,6 +76,32 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
     }).format(priceUSD);
     return isRent ? `${formatted} / mes` : formatted;
   },
+
+  properties: [],
+  settings: null,
+  status: 'idle',
+  errorMessage: '',
+  loadCatalog: async () => {
+    set({ status: 'loading', errorMessage: '' });
+    try {
+      const [list, settings, exchange] = await Promise.all([getProperties(), getSettings(), getExchangeRate()]);
+      set({
+        properties: list.items.map(mapApiProperty),
+        settings,
+        exchangeRate: exchange.rate > 0 ? exchange.rate : settings.exchangeRate,
+        status: 'ready',
+      });
+    } catch (error) {
+      set({
+        status: 'error',
+        errorMessage: error instanceof Error ? error.message : 'No se pudo conectar con el catálogo.',
+      });
+    }
+  },
+  retryCatalog: () => {
+    void get().loadCatalog();
+  },
+  whatsappNumber: () => get().settings?.whatsappNumber || DEFAULT_WHATSAPP,
 
   activeFilter: 'all',
   setActiveFilter: (filter) => set({ activeFilter: filter }),
@@ -85,8 +126,8 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
     }),
 
   getFilteredProperties: () => {
-    const { activeFilter, searchFilters } = get();
-    return propertiesData.filter((property) => {
+    const { activeFilter, searchFilters, properties } = get();
+    return properties.filter((property) => {
       if (activeFilter !== 'all' && !property.categories.includes(activeFilter)) {
         return false;
       }

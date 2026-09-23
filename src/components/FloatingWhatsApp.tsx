@@ -2,11 +2,14 @@
 
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
+import { useAppStore } from '@/store/useAppStore';
+import { whatsappUrl } from '@/lib/whatsapp';
 
 export const FloatingWhatsApp: React.FC = () => {
+  const whatsappNumber = useAppStore((state) => state.whatsappNumber)();
   return (
     <a
-      href="https://wa.me/595981879612?text=Hola%20Ysyry%20Inmobiliaria%2C%20quisiera%20recibir%20asesoramiento%20personalizado."
+      href={whatsappUrl('Hola Ysyry Inmobiliaria, quisiera recibir asesoramiento personalizado.', whatsappNumber)}
       target="_blank"
       rel="noopener noreferrer"
       className="floating-whatsapp-btn"

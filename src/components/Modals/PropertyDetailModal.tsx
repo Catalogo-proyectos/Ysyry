@@ -17,6 +17,7 @@ import {
 import { useAppStore } from '@/store/useAppStore';
 import { PropertyMedia } from '@/types/property';
 import { propertyHighlightIcons } from '@/components/propertyHighlightIcons';
+import { whatsappUrl } from '@/lib/whatsapp';
 
 type MediaTab = 'photos' | 'plans' | 'projections';
 
@@ -39,7 +40,8 @@ export const PropertyDetailModal: React.FC = () => {
     closeDetailModal,
     activeGalleryIndex,
     setActiveGalleryIndex,
-    formatPrice
+    formatPrice,
+    whatsappNumber
   } = useAppStore();
   const [mediaTab, setMediaTab] = useState<MediaTab>('photos');
 
@@ -69,10 +71,8 @@ export const PropertyDetailModal: React.FC = () => {
       selectedProperty.highlights?.length
   );
   const isTechnicalTab = mediaTab === 'plans';
-  const whatsappPhone = selectedProperty.whatsappNumber || '595981879612';
-  const whatsappMessage = encodeURIComponent(
-    `Hola, me comunico a través de la web. Estoy interesado/a en "${selectedProperty.title}". ¿Podrían brindarme más información y disponibilidad?`
-  );
+  const whatsappPhone = selectedProperty.whatsappNumber || whatsappNumber();
+  const whatsappMessage = `Hola, me comunico a través de la web. Estoy interesado/a en "${selectedProperty.title}". ¿Podrían brindarme más información y disponibilidad?`;
 
   const selectTab = (tab: MediaTab) => {
     setMediaTab(tab);
@@ -205,7 +205,7 @@ export const PropertyDetailModal: React.FC = () => {
           <footer className="property-modal-footer">
             <p>Consultas directas para reservas grupales, disponibilidad y eventos.</p>
             <a
-              href={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
+              href={whatsappUrl(whatsappMessage, whatsappPhone)}
               target="_blank"
               rel="noopener noreferrer"
               className="property-whatsapp-button"

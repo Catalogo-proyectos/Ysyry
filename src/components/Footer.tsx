@@ -2,8 +2,11 @@
 
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
+import { useAppStore } from '@/store/useAppStore';
+import { whatsappUrl } from '@/lib/whatsapp';
 
 export const Footer: React.FC = () => {
+  const whatsappNumber = useAppStore((state) => state.whatsappNumber)();
   return (
     <footer className="site-footer bg-slate-100 text-slate-900 pt-20 pb-10 border-t border-slate-200" id="contacto">
       <div className="container-custom">
@@ -23,12 +26,12 @@ export const Footer: React.FC = () => {
               Catálogo provisorio de propiedades, terrenos y proyectos. La información comercial, documental y de contacto se actualizará antes de la publicación definitiva.
             </p>
             <a
-              href="https://wa.me/595981879612?text=Hola%20Ysyry%20Inmobiliaria%2C%20quisiera%20consultar%20sobre%20las%20propiedades."
+              href={whatsappUrl('Hola Ysyry Inmobiliaria, quisiera consultar sobre las propiedades.', whatsappNumber)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-950 font-medium"
             >
-              <MessageCircle size={17} className="text-green-500" /> WhatsApp de demostración
+              <MessageCircle size={17} className="text-green-500" /> Consultar por WhatsApp
             </a>
           </div>
 

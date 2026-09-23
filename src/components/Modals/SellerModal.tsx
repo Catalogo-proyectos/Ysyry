@@ -2,31 +2,59 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
-import { X, CheckCircle2 } from 'lucide-react';
+import { createInquiry } from '@/lib/api';
+import { X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 export const SellerModal: React.FC = () => {
   const { isSellerModalOpen, closeSellerModal } = useAppStore();
-  const [submitted, setSubmitted] = useState(false);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [location, setLocation] = useState('');
+  const [propertyType, setPropertyType] = useState('casa');
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   if (!isSellerModalOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus('submitting');
+    setErrorMessage('');
+    try {
+      await createInquiry({
+        name,
+        phone,
+        message: `Tasación de ${propertyType} en ${location}`,
+        kind: 'TASATION',
+        location,
+        propertyType,
+      });
+      setStatus('success');
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'No se pudo enviar la solicitud. Intentalo de nuevo.');
+      setStatus('error');
+    }
+  };
+
+  const closeAndReset = () => {
+    closeSellerModal();
     setTimeout(() => {
-      setSubmitted(false);
-      closeSellerModal();
-    }, 2500);
+      setStatus('idle');
+      setName('');
+      setPhone('');
+      setLocation('');
+      setPropertyType('casa');
+    }, 250);
   };
 
   return (
-    <div className="modal-overlay active" onClick={closeSellerModal}>
+    <div className="modal-overlay active" onClick={closeAndReset}>
       <div
         className="modal-card max-w-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          onClick={closeSellerModal}
+          onClick={closeAndReset}
           className="modal-close-btn"
           aria-label="Cerrar"
         >
@@ -42,7 +70,7 @@ export const SellerModal: React.FC = () => {
             Completá el formulario para que un tasador certificado de Ysyry Inmobiliaria analice tu inmueble.
           </p>
 
-          {submitted ? (
+          {status === 'success' ? (
             <div className="py-10 text-center space-y-3">
               <CheckCircle2 size={48} className="text-green-500 mx-auto animate-bounce" />
               <h4 className="font-serif text-2xl text-slate-900">¡Solicitud Recibida!</h4>
@@ -57,6 +85,9 @@ export const SellerModal: React.FC = () => {
                 <input
                   type="text"
                   required
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Ej: Carlos Benítez"
                   className="form-input"
                 />
@@ -67,6 +98,9 @@ export const SellerModal: React.FC = () => {
                 <input
                   type="tel"
                   required
+                  name="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   placeholder="Ej: +595 981 000 000"
                   className="form-input"
                 />
@@ -77,6 +111,9 @@ export const SellerModal: React.FC = () => {
                 <input
                   type="text"
                   required
+                  name="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
                   placeholder="Ej: Asunción, Barrio Carmelitas"
                   className="form-input"
                 />
@@ -84,7 +121,13 @@ export const SellerModal: React.FC = () => {
 
               <div className="form-group text-left">
                 <label className="form-label">Tipo de Inmueble</label>
-                <select className="form-select-full" required>
+                <select
+                  className="form-select-full"
+                  required
+                  name="propertyType"
+                  value={propertyType}
+                  onChange={(e) => setPropertyType(e.target.value)}
+                >
                   <option value="departamento">Departamento</option>
                   <option value="casa">Casa / Residencia</option>
                   <option value="terreno">Terreno / Lote</option>
@@ -92,11 +135,25 @@ export const SellerModal: React.FC = () => {
                 </select>
               </div>
 
+              {status === 'error' && (
+                <div className="flex items-start gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg p-3">
+                  <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full btn-luxury btn-primary-luxury mt-4"
+                disabled={status === 'submitting'}
+                className="w-full btn-luxury btn-primary-luxury mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Solicitar Tasación Gratuita
+                {status === 'submitting' ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 size={16} className="animate-spin" /> Enviando...
+                  </span>
+                ) : (
+                  'Solicitar Tasación Gratuita'
+                )}
               </button>
             </form>
           )}
