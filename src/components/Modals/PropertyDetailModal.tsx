@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { PropertyMedia } from '@/types/property';
-import { propertyHighlightIcons } from '@/components/propertyHighlightIcons';
+import { resolveHighlightIcon } from '@/components/propertyHighlightIcons';
 import { whatsappUrl } from '@/lib/whatsapp';
 
 type MediaTab = 'photos' | 'plans' | 'projections';
@@ -169,11 +169,12 @@ export const PropertyDetailModal: React.FC = () => {
                   {!!selectedProperty.areaSqM && <span><Maximize2 size={18} /><strong>{selectedProperty.areaSqM}</strong> m²</span>}
                   {!!selectedProperty.parking && <span><Car size={18} /><strong>{selectedProperty.parking}</strong> cocheras</span>}
                   {selectedProperty.highlights?.map((highlight) => {
-                    const HighlightIcon = propertyHighlightIcons[highlight.icon];
+                    const HighlightIcon = resolveHighlightIcon(highlight.icon);
                     return (
-                      <span title={highlight.title} key={`${selectedProperty.id}-${highlight.label}`}>
+                      <span className="property-highlight" title={highlight.title} key={`${selectedProperty.id}-${highlight.label}`}>
                         <HighlightIcon size={18} />
                         <strong>{highlight.label}</strong>
+                        <em>{highlight.title}</em>
                       </span>
                     );
                   })}

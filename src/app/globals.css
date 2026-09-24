@@ -1252,6 +1252,27 @@ h4 { font-size: clamp(1.15rem, 2vw, 1.5rem); }
   font-size: 0.8rem;
   white-space: nowrap;
 }
+.property-facts-list .property-highlight {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  white-space: normal;
+}
+.property-facts-list .property-highlight strong {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #0F172A;
+}
+.property-facts-list .property-highlight em {
+  font-style: normal;
+  font-size: 0.7rem;
+  color: #64748B;
+}
 
 .property-progress-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; min-width: 330px; }
 .property-progress-detail div { display: flex; flex-direction: column; }

@@ -4,6 +4,7 @@ import {
   DoorOpen,
   PanelTop,
   Sofa,
+  Sparkles,
   Trees,
   type LucideIcon
 } from 'lucide-react';
@@ -17,3 +18,7 @@ export const propertyHighlightIcons: Record<PropertyHighlightIcon, LucideIcon> =
   patio: Trees,
   balcony: PanelTop
 };
+
+export function resolveHighlightIcon(icon: string): LucideIcon {
+  return propertyHighlightIcons[icon as PropertyHighlightIcon] ?? Sparkles;
+}

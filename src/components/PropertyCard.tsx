@@ -4,7 +4,7 @@ import React from 'react';
 import { Property } from '@/types/property';
 import { useAppStore } from '@/store/useAppStore';
 import { ArrowUpRight, Bath, Bed, Car, Images, MapPin, Maximize2 } from 'lucide-react';
-import { propertyHighlightIcons } from '@/components/propertyHighlightIcons';
+import { resolveHighlightIcon } from '@/components/propertyHighlightIcons';
 
 interface PropertyCardProps {
   property: Property;
@@ -61,7 +61,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               <div className="spec-item" title="Cocheras / Estacionamiento"><Car size={15} /><span>{property.parking} coch</span></div>
             )}
             {property.highlights?.map((highlight) => {
-              const HighlightIcon = propertyHighlightIcons[highlight.icon];
+              const HighlightIcon = resolveHighlightIcon(highlight.icon);
               return (
                 <div className="spec-item" title={highlight.title} key={`${property.id}-${highlight.label}`}>
                   <HighlightIcon size={15} />
