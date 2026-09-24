@@ -13,6 +13,8 @@ import { PropertyDetailModal } from '@/components/Modals/PropertyDetailModal';
 import { PublishModal } from '@/components/Modals/PublishModal';
 import { SellerModal } from '@/components/Modals/SellerModal';
 import { SellerBanner } from '@/components/SellerBanner';
+import { StatsSection } from '@/components/StatsSection';
+import { ValueProp } from '@/components/ValueProp';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Home() {
@@ -42,6 +44,8 @@ export default function Home() {
 
       <LandProjectionModule />
       <AboutSection />
+      <ValueProp />
+      <StatsSection />
       <SellerBanner />
 
       <HeroSection
