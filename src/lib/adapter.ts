@@ -13,6 +13,32 @@ import {
   PropertyOperation,
 } from '@/types/property';
 
+function parseGoogleMapsUrl(url: string | null | undefined): { lat: number; lng: number; zoom: number } | undefined {
+  if (!url) return undefined;
+  const atMatch = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)(?:,(\d+(?:\.\d+)?))?/);
+  if (atMatch) {
+    return { lat: Number(atMatch[1]), lng: Number(atMatch[2]), zoom: atMatch[3] ? Number(atMatch[3]) : 14 };
+  }
+  const searchMatch = url.match(/\/search\/([^?]+)/);
+  if (searchMatch) {
+    const coords = searchMatch[1].match(/(-?\d+(?:\.\d+)?)[,+]+\s*(-?\d+(?:\.\d+)?)/);
+    if (coords) return { lat: Number(coords[1]), lng: Number(coords[2]), zoom: 14 };
+  }
+  try {
+    const parsed = new URL(url);
+    const target = parsed.searchParams.get('q') ?? parsed.searchParams.get('ll');
+    if (target) {
+      const [rawLat, rawLng] = target.split(',');
+      const lat = Number.parseFloat(rawLat);
+      const lng = Number.parseFloat(rawLng);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng, zoom: 14 };
+    }
+  } catch {
+    // URL inválida: sin coordenadas parseables
+  }
+  return undefined;
+}
+
 const typeLabels: Record<ApiProperty['type'], string> = {
   HOUSE: 'Casa',
   APARTMENT: 'Departamento',
@@ -77,10 +103,13 @@ function toNumber(value: string | number | null | undefined): number | undefined
 export function mapApiProperty(apiProperty: ApiProperty): Property {
   const photos = toMedia(apiProperty.images, 'PHOTO');
   const firstPhoto = photos[0];
+  const parsedCoords = parseGoogleMapsUrl(apiProperty.locationUrl);
   const coordinates =
     apiProperty.lat !== null && apiProperty.lat !== undefined && apiProperty.lng !== null && apiProperty.lng !== undefined
       ? { lat: apiProperty.lat, lng: apiProperty.lng }
-      : undefined;
+      : parsedCoords
+        ? { lat: parsedCoords.lat, lng: parsedCoords.lng }
+        : undefined;
 
   const priceUSD =
     toNumber(apiProperty.priceUSD) ??
@@ -97,6 +126,8 @@ export function mapApiProperty(apiProperty: ApiProperty): Property {
     ),
     operation: toOperation(apiProperty.operation),
     tagText: apiProperty.tagText ?? '',
+    currency: apiProperty.currency === 'PYG' ? 'PYG' : 'USD',
+    price: toNumber(apiProperty.price),
     priceUSD,
     isRent: apiProperty.operation === 'RENT',
     bedrooms: apiProperty.bedrooms ?? undefined,
@@ -121,6 +152,6 @@ export function mapApiProperty(apiProperty: ApiProperty): Property {
     coordinates,
     department: apiProperty.department ?? undefined,
     address: apiProperty.address ?? undefined,
-    zoomLevel: apiProperty.zoomLevel ?? undefined,
+    zoomLevel: parsedCoords?.zoom ?? apiProperty.zoomLevel ?? undefined,
   };
 }
