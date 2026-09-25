@@ -15,6 +15,8 @@ export const AboutSection: React.FC = () => {
             <img
               src="/img/logo-ysyry-montana-bn.png"
               alt="Logo Ysyry"
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain bg-white p-8 sm:p-12"
             />
           </div>

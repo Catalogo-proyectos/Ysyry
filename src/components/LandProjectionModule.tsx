@@ -70,6 +70,8 @@ export const LandProjectionModule: React.FC = () => {
               <img
                 src={currentProjection.img}
                 alt={currentProjection.title}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
               />
               <span><Sparkles size={14} /> Simulación arquitectónica</span>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { createInquiry } from '@/lib/api';
 import { X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
@@ -13,6 +13,25 @@ export const SellerModal: React.FC = () => {
   const [propertyType, setPropertyType] = useState('casa');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const closeAndReset = () => {
+    closeSellerModal();
+    setTimeout(() => {
+      setStatus('idle');
+      setName('');
+      setPhone('');
+      setLocation('');
+      setPropertyType('casa');
+    }, 250);
+  };
+
+  useEffect(() => {
+    if (!isSellerModalOpen) return;
+    const onKey = (event: KeyboardEvent) => event.key === 'Escape' && closeAndReset();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSellerModalOpen]);
 
   if (!isSellerModalOpen) return null;
 
@@ -36,21 +55,13 @@ export const SellerModal: React.FC = () => {
     }
   };
 
-  const closeAndReset = () => {
-    closeSellerModal();
-    setTimeout(() => {
-      setStatus('idle');
-      setName('');
-      setPhone('');
-      setLocation('');
-      setPropertyType('casa');
-    }, 250);
-  };
-
   return (
     <div className="modal-overlay active" onClick={closeAndReset}>
       <div
         className="modal-card max-w-lg"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Solicitar tasación"
         onClick={(e) => e.stopPropagation()}
       >
         <button

@@ -9,7 +9,6 @@ type CatalogStatus = 'idle' | 'loading' | 'ready' | 'error';
 interface AppStoreState {
   currency: Currency;
   exchangeRate: number;
-  setCurrency: (currency: Currency) => void;
   formatPrice: (priceUSD: number, isRent?: boolean) => string;
 
   properties: Property[];
@@ -55,7 +54,6 @@ const DEFAULT_WHATSAPP = '595981879612';
 export const useAppStore = create<AppStoreState>((set, get) => ({
   currency: 'USD',
   exchangeRate: 7500,
-  setCurrency: (currency) => set({ currency }),
   formatPrice: (priceUSD, isRent = false) => {
     if (!priceUSD || priceUSD <= 0) return 'Consultar';
     const { currency, exchangeRate } = get();

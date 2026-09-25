@@ -32,12 +32,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-export function getProperties(): Promise<ApiPropertyList> {
-  return request<ApiPropertyList>('/properties');
-}
-
-export function getProperty(slug: string): Promise<ApiProperty> {
-  return request<ApiProperty>(`/properties/${encodeURIComponent(slug)}`);
+export function getProperties(limit = 100): Promise<ApiPropertyList> {
+  return request<ApiPropertyList>(`/properties?limit=${limit}`);
 }
 
 export function getSettings(): Promise<ApiSettings> {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import './globals.css';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api';
@@ -19,10 +20,11 @@ interface SettingsResult {
   about?: string;
 }
 
-async function getSettings(): Promise<SettingsResult> {
+const getSettings = cache(async (): Promise<SettingsResult> => {
   try {
     const response = await fetch(`${API_BASE}/settings`, {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
+      signal: AbortSignal.timeout(4000),
     });
     if (!response.ok) return FALLBACK;
     const data = (await response.json()) as SettingsResult;
@@ -30,7 +32,7 @@ async function getSettings(): Promise<SettingsResult> {
   } catch {
     return FALLBACK;
   }
-}
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();

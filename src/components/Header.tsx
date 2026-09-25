@@ -18,12 +18,10 @@ import {
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const {
-    isMobileMenuOpen,
-    setMobileMenuOpen,
-    openSellerModal,
-    whatsappNumber
-  } = useAppStore();
+  const isMobileMenuOpen = useAppStore((state) => state.isMobileMenuOpen);
+  const setMobileMenuOpen = useAppStore((state) => state.setMobileMenuOpen);
+  const openSellerModal = useAppStore((state) => state.openSellerModal);
+  const whatsappNumber = useAppStore((state) => state.whatsappNumber);
 
   useEffect(() => {
     const handleScroll = () => {

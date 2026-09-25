@@ -29,7 +29,7 @@ const PropertyMap = dynamic(
 );
 
 export const PropertyMapSection: React.FC = () => {
-  const { openDetailModal } = useAppStore();
+  const openDetailModal = useAppStore((state) => state.openDetailModal);
   const allProperties = useAppStore((state) => state.properties);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [activeRegion, setActiveRegion] = useState<'all' | 'alto-parana' | 'itapua'>('alto-parana');
@@ -176,6 +176,8 @@ export const PropertyMapSection: React.FC = () => {
                           <img
                             src={property.mainImg}
                             alt={property.title}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent" />

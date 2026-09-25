@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { createInquiry } from '@/lib/api';
 import { X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
@@ -12,6 +12,24 @@ export const PublishModal: React.FC = () => {
   const [details, setDetails] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const closeAndReset = () => {
+    closePublishModal();
+    setTimeout(() => {
+      setStatus('idle');
+      setName('');
+      setEmail('');
+      setDetails('');
+    }, 250);
+  };
+
+  useEffect(() => {
+    if (!isPublishModalOpen) return;
+    const onKey = (event: KeyboardEvent) => event.key === 'Escape' && closeAndReset();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPublishModalOpen]);
 
   if (!isPublishModalOpen) return null;
 
@@ -33,20 +51,13 @@ export const PublishModal: React.FC = () => {
     }
   };
 
-  const closeAndReset = () => {
-    closePublishModal();
-    setTimeout(() => {
-      setStatus('idle');
-      setName('');
-      setEmail('');
-      setDetails('');
-    }, 250);
-  };
-
   return (
     <div className="modal-overlay active" onClick={closeAndReset}>
       <div
         className="modal-card max-w-lg"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Publicar inmueble"
         onClick={(e) => e.stopPropagation()}
       >
         <button

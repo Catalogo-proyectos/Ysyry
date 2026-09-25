@@ -11,7 +11,8 @@ interface PropertyCardProps {
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
-  const { formatPrice, openDetailModal } = useAppStore();
+  const formatPrice = useAppStore((state) => state.formatPrice);
+  const openDetailModal = useAppStore((state) => state.openDetailModal);
   const hasSpecs = Boolean(
     property.bedrooms || property.beds || property.bathrooms || property.areaSqM || property.parking || property.highlights?.length
   );

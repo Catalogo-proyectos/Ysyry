@@ -83,7 +83,7 @@ export const PropertyDetailModal: React.FC = () => {
 
   return (
     <div className="modal-overlay active" onClick={closeDetailModal}>
-      <div className="modal-card property-modal" onClick={(event) => event.stopPropagation()}>
+      <div className="modal-card property-modal" role="dialog" aria-modal="true" aria-label="Ficha de propiedad" onClick={(event) => event.stopPropagation()}>
         <button onClick={closeDetailModal} className="modal-close-btn" aria-label="Cerrar ficha">
           <X size={20} />
         </button>
@@ -122,6 +122,8 @@ export const PropertyDetailModal: React.FC = () => {
                 <img
                   src={currentItem.src}
                   alt={currentItem.alt}
+                  loading="lazy"
+                  decoding="async"
                   className={isTechnicalTab ? 'object-contain' : 'object-cover property-image'}
                 />
               ) : (
@@ -147,7 +149,7 @@ export const PropertyDetailModal: React.FC = () => {
                     className={activeGalleryIndex === index ? 'active' : ''}
                     aria-label={`Ver ${item.title}`}
                   >
-                    {item.src ? <img src={item.src} alt="" /> : <Ruler size={20} />}
+                    {item.src ? <img src={item.src} alt="" loading="lazy" decoding="async" /> : <Ruler size={20} />}
                   </button>
                 ))}
               </div>

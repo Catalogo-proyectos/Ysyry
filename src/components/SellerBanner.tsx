@@ -46,6 +46,8 @@ export const SellerBanner: React.FC = () => {
             <img
               src="/img/aurora-cta.jpg"
               alt="Vender propiedad con Ysyry"
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover"
             />
           </div>

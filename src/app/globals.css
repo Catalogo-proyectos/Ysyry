@@ -270,32 +270,6 @@ h4 { font-size: clamp(1.15rem, 2vw, 1.5rem); }
 }
 
 
-.currency-toggle {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 3px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-light);
-  backdrop-filter: blur(8px);
-}
-
-.currency-btn {
-  padding: 0.3rem 0.7rem;
-  border-radius: var(--radius-full);
-  transition: var(--transition-fast);
-  cursor: pointer;
-}
-
-.currency-btn.active {
-  background-color: var(--color-text-light);
-  color: var(--color-bg-dark);
-}
-
-
 .hero-fullscreen {
   position: relative;
   min-height: 100vh;

@@ -51,6 +51,7 @@ export default function Home() {
       <HeroSection
         variant="dark"
         compact={true}
+        headingLevel="h2"
         badgeText="Atención directa"
         title={<>Tu próxima consulta<br />comienza con una propiedad.</>}
         subtitle="Cada ficha abre una conversación de WhatsApp con el inmueble identificado."

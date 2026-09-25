@@ -14,6 +14,7 @@ interface HeroProps {
   imageLabel?: string;
   variant?: 'image' | 'dark' | 'gradient';
   compact?: boolean;
+  headingLevel?: 'h1' | 'h2';
 }
 
 export const HeroSection: React.FC<HeroProps> = ({
@@ -26,9 +27,11 @@ export const HeroSection: React.FC<HeroProps> = ({
   ctaHref = '#propiedades',
   imageLabel,
   variant = 'image',
-  compact = false
+  compact = false,
+  headingLevel = 'h1'
 }) => {
   const isImageVariant = variant === 'image' && Boolean(bgImage);
+  const Heading = headingLevel;
 
   return (
     <section
@@ -62,7 +65,7 @@ export const HeroSection: React.FC<HeroProps> = ({
               {badgeText}
             </span>
           )}
-          <h1 className="hero-title">{title}</h1>
+          <Heading className="hero-title">{title}</Heading>
           {subtitle && <p className="hero-subtitle">{subtitle}</p>}
 
           {ctaText && (
