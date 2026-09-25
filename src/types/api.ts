@@ -1,4 +1,4 @@
-export type ApiPropertyType = 'HOUSE' | 'APARTMENT' | 'LAND' | 'DUPLEX' | 'COMMERCIAL' | 'OTHER';
+export type ApiPropertyType = string;
 export type ApiOperationType = 'SALE' | 'RENT';
 export type ApiImageKind = 'PHOTO' | 'PLAN' | 'DOCUMENT' | 'AI_RENDER';
 export type ApiProjectionStyle = 'QUINTA' | 'CASA' | 'DUPLEX';

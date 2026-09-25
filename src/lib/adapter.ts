@@ -22,6 +22,10 @@ const typeLabels: Record<ApiProperty['type'], string> = {
   OTHER: 'Otro',
 };
 
+function toType(type: string): string {
+  return typeLabels[type as ApiProperty['type']] ?? type;
+}
+
 const VALID_CATEGORIES: PropertyCategory[] = [
   'casa',
   'terreno',
@@ -87,7 +91,7 @@ export function mapApiProperty(apiProperty: ApiProperty): Property {
     title: apiProperty.title,
     location: [apiProperty.city, apiProperty.zone].filter(Boolean).join(', ') || apiProperty.address || apiProperty.zone,
     zone: apiProperty.zone,
-    type: typeLabels[apiProperty.type] ?? 'Otro',
+    type: toType(apiProperty.type),
     categories: apiProperty.categories.filter((category): category is PropertyCategory =>
       (VALID_CATEGORIES as string[]).includes(category),
     ),
