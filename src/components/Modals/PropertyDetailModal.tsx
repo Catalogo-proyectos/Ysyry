@@ -6,6 +6,7 @@ import {
   Bed,
   Car,
   Check,
+  FileText,
   Images,
   MapPin,
   Maximize2,
@@ -19,17 +20,19 @@ import { PropertyMedia } from '@/types/property';
 import { resolveHighlightIcon } from '@/components/propertyHighlightIcons';
 import { whatsappUrl } from '@/lib/whatsapp';
 
-type MediaTab = 'photos' | 'plans' | 'projections';
+type MediaTab = 'photos' | 'plans' | 'documents' | 'projections';
 
 const tabLabels: Record<MediaTab, string> = {
   photos: 'Fotos',
   plans: 'Planos',
+  documents: 'Documentos',
   projections: 'Proyección'
 };
 
 const tabIcons: Record<MediaTab, React.ReactNode> = {
   photos: <Images size={16} />,
   plans: <Ruler size={16} />,
+  documents: <FileText size={16} />,
   projections: <Sparkles size={16} />
 };
 
@@ -40,7 +43,7 @@ export const PropertyDetailModal: React.FC = () => {
     closeDetailModal,
     activeGalleryIndex,
     setActiveGalleryIndex,
-    formatPrice,
+    formatPropertyPrice,
     whatsappNumber
   } = useAppStore();
   const [mediaTab, setMediaTab] = useState<MediaTab>('photos');
@@ -53,9 +56,9 @@ export const PropertyDetailModal: React.FC = () => {
 
   const availableTabs = useMemo(() => {
     if (!selectedProperty) return [] as MediaTab[];
-    return (['photos', 'plans', 'projections'] as MediaTab[]).filter((tab) => {
+    return (['photos', 'plans', 'documents', 'projections'] as MediaTab[]).filter((tab) => {
       const items = selectedProperty[tab];
-      if (tab === 'plans') return items.some((item) => Boolean(item.src));
+      if (tab === 'plans' || tab === 'documents') return items.some((item) => Boolean(item.src));
       return items.length > 0;
     });
   }, [selectedProperty]);
@@ -72,7 +75,9 @@ export const PropertyDetailModal: React.FC = () => {
       selectedProperty.parking ||
       selectedProperty.highlights?.length
   );
-  const isTechnicalTab = mediaTab === 'plans';
+  const isTechnicalTab = mediaTab === 'plans' || mediaTab === 'documents';
+  const isDocumentTab = mediaTab === 'documents';
+  const price = formatPropertyPrice(selectedProperty);
   const whatsappPhone = selectedProperty.whatsappNumber || whatsappNumber();
   const whatsappMessage = `Hola, me comunico a través de la web. Estoy interesado/a en "${selectedProperty.title}". ¿Podrían brindarme más información y disponibilidad?`;
 
@@ -97,8 +102,8 @@ export const PropertyDetailModal: React.FC = () => {
             </div>
             <div className="property-modal-price">
               <span>{selectedProperty.operation === 'venta' ? 'Venta' : 'Alquiler'}</span>
-              <strong>{selectedProperty.priceUSD ? formatPrice(selectedProperty.priceUSD, selectedProperty.isRent) : 'Consultar'}</strong>
-              <small>Información provisoria</small>
+              <strong>{price.primary}</strong>
+              <small>{price.secondary ?? 'Información provisoria'}</small>
             </div>
           </header>
 
@@ -118,7 +123,16 @@ export const PropertyDetailModal: React.FC = () => {
             </div>
 
             <div className={`property-media-stage ${isTechnicalTab ? 'technical' : ''}`}>
-              {currentItem?.src ? (
+              {isDocumentTab && currentItem?.src ? (
+                <div className="property-document-viewer">
+                  <a href={currentItem.src} target="_blank" rel="noopener noreferrer" className="property-document-link">
+                    <FileText size={48} />
+                    <strong>Abrir documento</strong>
+                    <span>{currentItem.title}</span>
+                  </a>
+                  <iframe src={currentItem.src} title={currentItem.title} className="property-document-preview" />
+                </div>
+              ) : currentItem?.src ? (
                 <img
                   src={currentItem.src}
                   alt={currentItem.alt}
