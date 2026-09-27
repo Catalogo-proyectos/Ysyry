@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint \"{src,eslint.config.mjs}/**/*.{ts,tsx}\"",
     "docker:build": "docker build -t ysyry .",
-    "docker:run": "docker run -p 3000:3000 ysyry",
+    "docker:run": "docker run -p 7074:7074 ysyry",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down"
   },
