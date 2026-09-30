@@ -6,10 +6,25 @@ import { getExchangeRate, getProperties, getSettings } from '@/lib/api';
 
 type CatalogStatus = 'idle' | 'loading' | 'ready' | 'error';
 
+export interface PriceDisplay {
+  primary: string;
+  secondary?: string;
+}
+
+function formatAmount(amount: number, currency: Currency, isRent = false): string {
+  if (!amount || amount <= 0) return 'Consultar';
+  if (currency === 'PYG') {
+    const formatted = new Intl.NumberFormat('es-PY', { maximumFractionDigits: 0 }).format(amount);
+    return isRent ? `Gs. ${formatted} / mes` : `Gs. ${formatted}`;
+  }
+  const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+  return isRent ? `${formatted} / mes` : formatted;
+}
+
 interface AppStoreState {
-  currency: Currency;
   exchangeRate: number;
-  formatPrice: (priceUSD: number, isRent?: boolean) => string;
+  formatPrice: (amount: number, isRent?: boolean, currency?: Currency) => string;
+  formatPropertyPrice: (property: Property) => PriceDisplay;
 
   properties: Property[];
   settings: ApiSettings | null;
@@ -52,27 +67,35 @@ interface AppStoreState {
 const DEFAULT_WHATSAPP = '595981879612';
 
 export const useAppStore = create<AppStoreState>((set, get) => ({
-  currency: 'USD',
   exchangeRate: 7500,
-  formatPrice: (priceUSD, isRent = false) => {
-    if (!priceUSD || priceUSD <= 0) return 'Consultar';
-    const { currency, exchangeRate } = get();
-    if (currency === 'PYG') {
-      const pygAmount = priceUSD * exchangeRate;
-      const formatted = new Intl.NumberFormat('es-PY', {
-        style: 'currency',
-        currency: 'PYG',
-        maximumFractionDigits: 0
-      }).format(pygAmount);
-      return isRent ? `${formatted} / mes` : formatted;
+  formatPrice: (amount, isRent = false, currency = 'USD') => formatAmount(amount, currency, isRent),
+  formatPropertyPrice: (property) => {
+    const { exchangeRate } = get();
+    const isRent = property.isRent ?? false;
+    const native = property.price && property.price > 0 ? property.price : undefined;
+    const usd = property.priceUSD && property.priceUSD > 0 ? property.priceUSD : undefined;
+
+    if (property.currency === 'PYG') {
+      const primary = native
+        ? formatAmount(native, 'PYG', isRent)
+        : usd
+          ? formatAmount(usd, 'USD', isRent)
+          : 'Consultar';
+      const secondary = usd
+        ? `≈ ${formatAmount(usd, 'USD')}`
+        : native && exchangeRate > 0
+          ? `≈ ${formatAmount(native / exchangeRate, 'USD')}`
+          : undefined;
+      return { primary, secondary };
     }
 
-    const formatted = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(priceUSD);
-    return isRent ? `${formatted} / mes` : formatted;
+    const primary = usd
+      ? formatAmount(usd, 'USD', isRent)
+      : native
+        ? formatAmount(native, 'USD', isRent)
+        : 'Consultar';
+    const secondary = native && exchangeRate > 0 ? `≈ ${formatAmount(native * exchangeRate, 'PYG')}` : undefined;
+    return { primary, secondary };
   },
 
   properties: [],

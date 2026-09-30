@@ -37,6 +37,8 @@ export interface Property {
   categories: PropertyCategory[];
   operation: PropertyOperation;
   tagText: string;
+  currency: Currency;
+  price?: number;
   priceUSD?: number;
   isRent?: boolean;
   bedrooms?: number;

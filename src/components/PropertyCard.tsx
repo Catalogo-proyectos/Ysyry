@@ -11,14 +11,23 @@ interface PropertyCardProps {
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
-  const formatPrice = useAppStore((state) => state.formatPrice);
+  const formatPropertyPrice = useAppStore((state) => state.formatPropertyPrice);
   const openDetailModal = useAppStore((state) => state.openDetailModal);
   const hasSpecs = Boolean(
     property.bedrooms || property.beds || property.bathrooms || property.areaSqM || property.parking || property.highlights?.length
   );
+  const price = formatPropertyPrice(property);
+  const open = () => openDetailModal(property);
 
   return (
-    <article className="property-card group">
+    <article
+      className="property-card group"
+      onClick={open}
+      onKeyDown={(event) => event.key === 'Enter' && open()}
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver ficha de ${property.title}`}
+    >
       <div className="property-thumb-wrap">
         <span className="property-card-tag">{property.tagText}</span>
         <span className="property-media-label">{property.coverLabel}</span>
@@ -88,18 +97,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
 
         <div className="property-footer">
           <div className="property-price">
-            {property.priceUSD ? formatPrice(property.priceUSD, property.isRent) : 'Consultar'}
+            {price.primary}
             <span>
-              {property.priceUSD
-                ? (property.isRent ? 'Alquiler' : 'Precio provisorio')
-                : (property.operation === 'alquiler' ? 'Tarifas según grupo / estadía' : 'Condiciones a confirmar')}
+              {price.secondary ?? (property.isRent ? 'Tarifas según grupo / estadía' : 'Condiciones a confirmar')}
             </span>
           </div>
 
-          <button
-            onClick={() => openDetailModal(property)}
-            className="property-detail-button"
-          >
+          <button onClick={open} className="property-detail-button">
             Ver ficha <ArrowUpRight size={14} />
           </button>
         </div>
